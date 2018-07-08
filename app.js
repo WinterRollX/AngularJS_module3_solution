@@ -13,16 +13,22 @@
 		var menuList = this;
 		menuList.found = [];
 		menuList.searchTerm = "";
+		menuList.errorMessage = "";
 
-		this.testFun2 = function () {
-			var searchTerm = "egg";
+		menuList.onClickNarrowItDown = function () {
+			var searchTerm = menuList.searchTerm;
 			var foundList = MenuSearchService.getMatchedMenuItems(searchTerm);
 			// here foundList is a promise
-			foundList.then(function (found) {
+			foundList.then(
+			//on success
+				function (found) {
+				menuList.errorMessage = "";
 				menuList.found=found;
-				console.log("completed loading");
-			},function (reason) {
-				console.log("Fail to load, reason:" + reason);
+			},
+			//on fail:
+			function (reason) {
+				menuList.found = [];
+				menuList.errorMessage = reason;
 			});
 		}
 	}
@@ -38,10 +44,9 @@
 			var jsonDataPromise = service.getAllItems();
 			jsonDataPromise.then(function (response) {
 				//when all item list is ready, filter them.
-				console.log(response.data);
 				var itemList = response.data.menu_items;
-				if(  itemList.length > 0){
-					var found = service.filterItems(itemList,searchTerm);
+				var found = service.filterItems(itemList,searchTerm);
+				if(  found.length > 0 && searchTerm != ''){
 					defered.resolve(found);
 				}
 				else{defered.reject("Nothing matched!");}
