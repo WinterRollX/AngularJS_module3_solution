@@ -2,7 +2,8 @@
 	//IIF body
 	angular.module("NarrowItDownApp",[]).
 	controller("NarrowItDownController",NarrowItDownController).
-	service('MenuSearchService',MenuSearchService);
+	service('MenuSearchService',MenuSearchService).
+	directive("foundItems",FoundItems);
 
 
 
@@ -30,6 +31,10 @@
 				menuList.found = [];
 				menuList.errorMessage = reason;
 			});
+		}
+		menuList.onClickNotThisOne = function (itemIndex) {
+			menuList.found.splice(itemIndex,1);
+
 		}
 	}
 
@@ -72,7 +77,20 @@
 				return found;
 
 		}
+	}
 
+	FoundItems.$inject = [];
+	function FoundItems() {
+		var ddo = {
+			templateUrl: 'foundItems.html',
+			//template: " <ul><li ng-repeat= 'menuItem in itemList'>Name:{{menuItem.name}} Description: {{menuItem.description}}<button ng-click = 'onRemove({index:$index});'' >Do not want this!</button></li></ul> ",
+			scope: {
+				itemList: '<searchResult',
+				onRemove: '&'
+			}
+		};
+		//console.log(ddo);
+		return ddo;
 	}
 
 
